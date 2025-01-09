@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .shadow-text {
+    @apply [text-shadow:1px_1px_2px_var(--tw-shadow-color)] shadow-slate-800;
+  }
+
+  .form-input {
+    @apply w-full rounded-lg py-1 px-3 focus:outline-none;
+  }
+}
