@@ -30,6 +30,19 @@ const User = sequelize.define("user", {
       },
     },
   },
+  phone_number: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
+  activationLink: { type: DataTypes.STRING, allowNull: true },
+});
+
+const UserSecret = sequelize.define("user_secret", {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -42,9 +55,15 @@ const User = sequelize.define("user", {
       },
     },
   },
-  role: { type: DataTypes.STRING, defaultValue: "USER" },
-  isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
-  activationLink: { type: DataTypes.STRING, allowNull: true },
 });
 
-module.exports = User;
+const Role = sequelize.define("role", {
+  role_name: { type: DataTypes.STRING, defaultValue: "USER" },
+});
+
+User.hasOne(UserSecret);
+User.hasOne(Role);
+UserSecret.belongsTo(User);
+Role.belongsTo(User);
+
+module.exports = { User, UserSecret };

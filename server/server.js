@@ -10,7 +10,7 @@ const startServer = async () => {
     await sequelize.authenticate();
 
     // sinchronizuojam modelius su db
-    // produksine negalima
+    // produksine nepatartina
     await sequelize.sync({ alter: true });
 
     app.listen(port, () => {

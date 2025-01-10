@@ -1,19 +1,54 @@
-import * as z from 'zod';
-import { RegisterSchema } from '../schemas/RegisterSchema';
-import axios, { AxiosResponse } from 'axios';
+import * as z from "zod";
+import { RegisterSchema } from "../schemas/RegisterSchema";
+import axios, { AxiosResponse } from "axios";
+import { LoginSchema } from "../schemas/LoginSchema";
 
-const USERS_API = 'http://localhost:3003/api/v1/users';
+const USERS_API = "http://localhost:3003/api/v1/users";
+
+interface IApiError {
+  error: string;
+}
 
 export const apiRegisterUser = async (
   formValues: z.infer<typeof RegisterSchema>
 ) => {
   const validatedFields = RegisterSchema.safeParse(formValues);
 
-  if (!validatedFields.success) return { error: 'Neteisingi formos laukai' };
+  if (!validatedFields.success) return { error: "Neteisingi formos laukai" };
 
   try {
-    const res: AxiosResponse = await axios.post(USERS_API, formValues);
-  } catch (e) {
-    console.log(e);
+    const res: AxiosResponse | IApiError = await axios.post(
+      USERS_API,
+      formValues
+    );
+    return res;
+  } catch (e: unknown) {
+    if (axios.isAxiosError(e)) {
+      return { error: e.response?.data.message };
+    }
+    return { error: "Įvyko nenumatyta klaida" };
+  }
+};
+
+export const apiUserLogin = async (formValues: z.infer<typeof LoginSchema>) => {
+  const validatedFields = LoginSchema.safeParse(formValues);
+
+  if (!validatedFields.success) return { error: "Neteisingi formos laukai" };
+};
+
+export const apiGetAllUsers = async () => {
+  try {
+    const res = await axios.get(USERS_API);
+    return res.data;
+  } catch (e: unknown) {
+    return { error: e };
+  }
+};
+
+export const apiDeleteUser = async (id: string) => {
+  try {
+    return await axios.delete(`${USERS_API}/${id}`);
+  } catch (e: unknown) {
+    return { error: e };
   }
 };

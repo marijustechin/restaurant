@@ -1,73 +1,40 @@
-import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
-import { RegisterSchema } from "../../schemas/RegisterSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router";
-import { apiRegisterUser } from "../../api/users";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { LoginSchema } from "../../schemas/LoginSchema";
 import { useState } from "react";
-import { AxiosResponse } from "axios";
+import { Link } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export const RegisterForm = () => {
+export const LoginForm = () => {
   const [error, setError] = useState("");
   const {
     register,
-    handleSubmit,
     formState: { errors },
-    reset,
-  } = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+    handleSubmit,
+  } = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
-      first_name: "",
       email: "",
       password: "",
     },
   });
 
-  interface IApiError {
-    error: string;
-  }
-
-  const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = async (
+  const onSubmit: SubmitHandler<z.infer<typeof LoginSchema>> = async (
     formData
   ) => {
-    const res: AxiosResponse | IApiError = await apiRegisterUser(formData);
-    if (res.error) {
-      setError(res?.error);
-    } else {
-      setError("Registracija sekminga ir t.t. galima redirectint");
-      reset();
-    }
+    setError("Klaida?");
+    console.log(formData);
   };
 
   return (
     <form
+      className="max-w-sm mx-auto"
       noValidate
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-sm mx-auto"
     >
       <div className="h-10">
         <p className="text-sm text-center text-rose-500">{error}</p>
       </div>
-      {errors.first_name && (
-        <span className="text-xs text-rose-500">
-          {errors.first_name.message}
-        </span>
-      )}
-      <fieldset className="border border-slate-300 px-1 rounded-lg flex flex-col gap-2">
-        <legend
-          className={`${
-            errors.first_name ? "text-rose-500" : "text-slate-600"
-          } ml-4 p-1`}
-        >
-          Vardas
-        </legend>
-        <input
-          className="form-input"
-          type="text"
-          autoComplete="on"
-          {...register("first_name")}
-        />
-      </fieldset>
       {errors.email && (
         <span className="text-xs text-rose-500">{errors.email.message}</span>
       )}
@@ -109,15 +76,15 @@ export const RegisterForm = () => {
           className="btn-generic bg-slate-500 text-slate-50 rounded-lg p-2 hover:bg-slate-700"
           type="submit"
         >
-          Užsiregistruoti
+          Prisijungti
         </button>
         <p>
-          Ne pirmas kartas?{" "}
+          Pirmas kartas?{" "}
           <Link
             className="text-slate-700 underline underline-offset-8"
-            to={"/prisijungimas"}
+            to={"/registracija"}
           >
-            Prašome prisijungti
+            Prašome užsiregistruoti
           </Link>
         </p>
       </div>
