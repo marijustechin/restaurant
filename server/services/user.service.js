@@ -1,22 +1,31 @@
 const bcrypt = require("bcryptjs");
-const { User } = require("../models/user.model");
+const sequelize = require("../db");
+const { user, user_secret, role } = sequelize.models;
+//const { user } = require("../models/user.model");
 const ApiError = require("../exceptions/api.errors");
 const UserDto = require("../dtos/user.dto");
 
 class UserService {
   async registration(first_name, email, password) {
     // patikrinam ar pastas neuzimtas
-    const existingEmail = await User.findOne({ where: { email } });
+    console.log(user);
+    const existingEmail = await user.findOne({ where: { email } });
     if (existingEmail)
       throw ApiError.BadRequest(`El. pašto adresas ${email} jau naudojamas`);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
-      first_name,
-      email,
-      password: hashedPassword,
-    });
+    const newUser = await user.create(
+      {
+        first_name,
+        email,
+        role: [{ role_name: "USER" }],
+        user_secret: [{ password: hashedPassword }],
+      },
+      {
+        include: [role, user_secret],
+      }
+    );
 
     const userDto = new UserDto(newUser);
 
@@ -24,7 +33,7 @@ class UserService {
   }
 
   async getAllUsers() {
-    const users = await User.findAll();
+    const users = await user.findAll();
 
     let usersDto = [];
 
@@ -37,7 +46,7 @@ class UserService {
   }
 
   async deleteUser(id) {
-    const user = await User.destroy({ where: { id } });
+    const user = await user.destroy({ where: { id } });
     return new UserDto(user);
   }
 }

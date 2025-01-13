@@ -1,9 +1,24 @@
 const { Sequelize } = require("sequelize");
+const { modelRelations } = require("./models/relations");
 
-module.exports = new Sequelize(
+const sequelize = new Sequelize(
   // Konstruktoriuje nurodome konfigūraciją
   process.env.DB_NAME,
   process.env.DB_USER,
   process.env.DB_PASS,
   { dialect: "postgres", host: process.env.DB_HOST, port: process.env.DB_PORT }
 );
+
+const modelDefiners = [
+  require("./models/menuitem.model"),
+  require("./models/order.model"),
+  require("./models/user.model"),
+];
+
+for (const modelDefiner of modelDefiners) {
+  modelDefiner(sequelize);
+}
+
+modelRelations(sequelize);
+
+module.exports = sequelize;
