@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
 );
 
 const modelDefiners = [
-  require("./models/menuitem.model"),
+  require("./models/menu.model"),
   require("./models/order.model"),
   require("./models/user.model"),
 ];

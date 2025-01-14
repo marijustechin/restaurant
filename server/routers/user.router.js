@@ -3,9 +3,21 @@ const userController = require("../controllers/user.controller");
 
 const userRouter = new Router();
 
-userRouter.post("/", userController.register);
-userRouter.post("/login", userController.login);
-userRouter.delete("/:id", userController.deleteUser);
+// naudotoju sarasas
 userRouter.get("/", userController.getAll);
+// naudotojas paga id
+userRouter.get("/:id", userController.getUserById);
+
+// sukuriam nauja
+userRouter.post("/", userController.register);
+
+// prisijungimas
+userRouter.post("/login", userController.login);
+
+// naudotojo modifikavimas
+userRouter.put("/:id", userController.updateUser);
+
+// istrinam
+userRouter.delete("/:id", userController.deleteUser);
 
 module.exports = userRouter;

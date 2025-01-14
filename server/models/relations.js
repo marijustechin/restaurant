@@ -11,18 +11,18 @@ function modelRelations(sequelize) {
   } = sequelize.models;
 
   // useris
-  user.belongsTo(role);
-  user.hasOne(user_secret);
+  user.belongsTo(role, { foreignKey: "role_id" });
+  user.hasOne(user_secret, { foreignKey: "user_id" });
   user.hasMany(order);
 
-  user_secret.belongsTo(user);
+  user_secret.belongsTo(user, { foreignKey: "user_id" });
 
   // role
-  role.hasMany(user);
+  role.hasMany(user, { foreignKey: "role_id" });
 
   // patiekalai
-  category.hasMany(menu_item);
-  menu_item.belongsTo(category);
+  category.hasMany(menu_item, { foreignKey: "category_id" });
+  menu_item.belongsTo(category, { foreignKey: "category_id" });
   menu_item.hasMany(order_items);
   order_items.belongsTo(menu_item);
 

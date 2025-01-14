@@ -11,7 +11,7 @@ const startServer = async () => {
 
     // sinchronizuojam modelius su db
     // produksine nepatartina
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true });
 
     app.listen(port, () => {
       console.log(`Serveris veikia. Prievadas: ${port}`);
