@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const sequelize = require("../db");
+const jwt = require('jsonwebtoken');
+const sequelize = require('../db');
 const { token } = sequelize.models;
 
 class TokenService {
@@ -9,11 +9,11 @@ class TokenService {
   // REIKES PAKEISTI
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-      expiresIn: "30m",
+      expiresIn: '30m',
     });
 
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-      expiresIn: "1d",
+      expiresIn: '1d',
     });
 
     return { accessToken, refreshToken };
