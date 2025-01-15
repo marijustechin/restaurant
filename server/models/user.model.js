@@ -64,5 +64,8 @@ module.exports = (sequelize) => {
           },
         },
       },
+    }),
+    sequelize.define("token", {
+      refreshToken: { type: DataTypes.TEXT, allowNull: false },
     });
 };

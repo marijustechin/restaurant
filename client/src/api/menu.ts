@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_URL } from ".";
 
-const MENU_API = "http://localhost:3003/api/v1/menu";
+const MENU_API = `${API_URL}/menu`;
 
 export const apiGetAllMenuItems = async () => {
   try {

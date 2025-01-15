@@ -1,10 +1,21 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { createContext, StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.tsx";
+import Store from "./store/store.ts";
 
-createRoot(document.getElementById('root')!).render(
+interface State {
+  store: Store;
+}
+
+const store = new Store();
+
+export const AuthContext = createContext<State>({ store });
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <AuthContext.Provider value={{ store }}>
+      <App />
+    </AuthContext.Provider>
+  </StrictMode>
+);

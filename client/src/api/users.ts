@@ -2,8 +2,9 @@ import * as z from "zod";
 import { RegisterSchema } from "../schemas/RegisterSchema";
 import axios, { AxiosResponse } from "axios";
 import { LoginSchema } from "../schemas/LoginSchema";
+import { API_URL } from ".";
 
-const USERS_API = "http://localhost:3003/api/v1/users";
+const USERS_API = `${API_URL}/users`;
 
 interface IApiError {
   error: string;
@@ -34,6 +35,13 @@ export const apiUserLogin = async (formValues: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(formValues);
 
   if (!validatedFields.success) return { error: "Neteisingi formos laukai" };
+
+  try {
+    const res = await axios.post(`${USERS_API}/login`, formValues);
+    console.log(res.data);
+  } catch (e) {
+    return { error: e };
+  }
 };
 
 export const apiGetAllUsers = async () => {

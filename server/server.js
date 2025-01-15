@@ -9,6 +9,9 @@ const startServer = async () => {
     // prisijungiam prie db
     await sequelize.authenticate();
 
+    // istrinam visas lenteles
+    //await sequelize.truncate();
+
     // sinchronizuojam modelius su db
     // produksine nepatartina
     await sequelize.sync({ alter: true });

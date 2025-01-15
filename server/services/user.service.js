@@ -3,6 +3,7 @@ const sequelize = require("../db");
 const { user, user_secret, role } = sequelize.models;
 const ApiError = require("../exceptions/api.errors");
 const UserDto = require("../dtos/user.dto");
+const tokenService = require("../services/token.service");
 
 class UserService {
   async #getUserByEmail(email) {
@@ -15,6 +16,7 @@ class UserService {
   async registration(first_name, email, password) {
     // patikrinam ar pastas neuzimtas
     const existingEmail = await user.findOne({ where: { email } });
+
     if (existingEmail)
       throw ApiError.BadRequest(`El. pašto adresas ${email} jau naudojamas`);
 
@@ -35,8 +37,10 @@ class UserService {
     );
 
     const userDto = new UserDto(newUser);
+    const tokens = tokenService.generateTokens({ ...userDto });
+    await tokenService.saveRefreshToken(userDto.id, tokens.refreshToken);
 
-    return userDto;
+    return { ...tokens, userDto };
   }
 
   async getAllUsers() {
@@ -65,18 +69,30 @@ class UserService {
         `Neteisingas el. pašto adresas arba slaptažodis`
       );
 
+    // Čia turi buti patikrinimas, ar naudotojas aktyvavo savo paskyrą
+
     const valid = await bcrypt.compare(
       password,
-      activeUser.dataValues.user_secret.dataValues.password
+      activeUser.user_secret.password
     );
 
     if (!valid) {
       throw ApiError.BadRequest(
         `Neteisingas el. pašto adresas arba slaptažodis`
       );
-    } else {
-      return new UserDto(activeUser);
     }
+
+    const userDto = new UserDto(activeUser);
+
+    const tokens = tokenService.generateTokens({ ...userDto });
+
+    return { ...tokens, user: userDto };
+  }
+
+  async logoutUser(refreshToken) {
+    const token = await tokenService.removeToken(refreshToken);
+
+    return token;
   }
 
   async userUpdate(id, data) {

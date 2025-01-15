@@ -2,13 +2,15 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { RegisterSchema } from "../../schemas/RegisterSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { apiRegisterUser } from "../../api/users";
 import { useState } from "react";
 import { AxiosResponse } from "axios";
 
 export const RegisterForm = () => {
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -34,8 +36,7 @@ export const RegisterForm = () => {
     if (res.error) {
       setError(res?.error);
     } else {
-      setError("Registracija sekminga ir t.t. galima redirectint");
-      reset();
+      navigate("/prisijungimas");
     }
   };
 

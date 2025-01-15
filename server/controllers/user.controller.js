@@ -40,7 +40,29 @@ class UserController {
 
       const loggedUser = await userService.userlogin(email, password);
 
+      // refreshToken dedam i cookies
+      res.cookie("refreshToken", loggedUser.refreshToken, {
+        maxAge: 24 * 60 * 60 * 1000, // 1 diena
+        // httpOnly pasako serveriui, kad cookie esanti informacija
+        // neturi buti siunciama uz serverio ribu
+        // ir kad serveris turi nerodyti, kas viduje
+        httpOnly: true,
+      });
+
       res.status(200).json(loggedUser);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async logout(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+
+      const token = userService.logoutUser(refreshToken);
+
+      res.clearCookie("refreshToken");
+      return res.json(token);
     } catch (e) {
       next(e);
     }

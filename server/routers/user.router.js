@@ -14,6 +14,9 @@ userRouter.post("/", userController.register);
 // prisijungimas
 userRouter.post("/login", userController.login);
 
+// atsijungimas
+userRouter.post("/logout", userController.logout);
+
 // naudotojo modifikavimas
 userRouter.put("/:id", userController.updateUser);
 

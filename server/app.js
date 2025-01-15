@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 // endpointai
 const userRouter = require("./routers/user.router");
@@ -13,7 +14,16 @@ const app = express();
 
 // Midlvares visokios
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    // Dėl slapukų ir cross-origin resource share
+    // turi būti nurodomas fronto URL
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  })
+);
+app.use(cookieParser());
+
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/menu", menuRouter);
 app.use("/api/v1/orders", orderRouter);

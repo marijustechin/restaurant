@@ -1,12 +1,17 @@
 import * as z from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LoginSchema } from "../../schemas/LoginSchema";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthContext } from "../../main";
 
 export const LoginForm = () => {
+  // store - klase
+  const { store } = useContext(AuthContext);
+
   const [error, setError] = useState("");
+
   const {
     register,
     formState: { errors },
@@ -22,8 +27,16 @@ export const LoginForm = () => {
   const onSubmit: SubmitHandler<z.infer<typeof LoginSchema>> = async (
     formData
   ) => {
-    setError("Klaida?");
-    console.log(formData);
+    const validatedFields = LoginSchema.safeParse(formData);
+
+    if (!validatedFields.success) {
+      setError("Neteisingi formos laukai");
+      return;
+    }
+
+    const { email, password } = validatedFields.data;
+
+    store.login(email, password);
   };
 
   return (
