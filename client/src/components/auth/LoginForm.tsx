@@ -1,16 +1,17 @@
-import * as z from 'zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { LoginSchema } from '../../schemas/LoginSchema';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AuthContext } from '../../App';
+import * as z from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { LoginSchema } from "../../schemas/LoginSchema";
+import { Link, useNavigate } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { apiUserLogin } from "../../api/users";
+import { login } from "../../store/features/user/userSlice";
+import { useDispatch } from "react-redux";
 
 export const LoginForm = () => {
-  // store - klase
-  const { store } = useContext(AuthContext);
-
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const {
     register,
@@ -19,24 +20,21 @@ export const LoginForm = () => {
   } = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof LoginSchema>> = async (
     formData
   ) => {
-    const validatedFields = LoginSchema.safeParse(formData);
-
-    if (!validatedFields.success) {
-      setError('Neteisingi formos laukai');
-      return;
+    const res = await apiUserLogin(formData);
+    if (res.error) {
+      setError(res.error);
+    } else {
+      dispatch(login({ id: res.user.id, role: "USER" }));
+      navigate("/pirkejo-paskyra");
     }
-
-    const { email, password } = validatedFields.data;
-
-    store.login(email, password);
   };
 
   return (
@@ -54,7 +52,7 @@ export const LoginForm = () => {
       <fieldset className="border border-slate-300 p-1 rounded-lg flex flex-col gap-2">
         <legend
           className={`${
-            errors.email ? 'text-rose-500' : 'text-slate-600'
+            errors.email ? "text-rose-500" : "text-slate-600"
           } ml-4 p-1`}
         >
           El. paštas
@@ -63,7 +61,7 @@ export const LoginForm = () => {
           className="form-input"
           type="email"
           autoComplete="on"
-          {...register('email')}
+          {...register("email")}
         />
       </fieldset>
       {errors.password && (
@@ -72,7 +70,7 @@ export const LoginForm = () => {
       <fieldset className="border border-slate-300 p-1 rounded-lg">
         <legend
           className={`${
-            errors.password ? 'text-rose-500' : 'text-slate-600'
+            errors.password ? "text-rose-500" : "text-slate-600"
           } ml-4 p-1`}
         >
           Slaptažodis
@@ -81,7 +79,7 @@ export const LoginForm = () => {
           className="form-input"
           type="password"
           autoComplete="off"
-          {...register('password')}
+          {...register("password")}
         />
       </fieldset>
       <div className="flex flex-col gap-2 mt-2">
@@ -92,10 +90,10 @@ export const LoginForm = () => {
           Prisijungti
         </button>
         <p>
-          Pirmas kartas?{' '}
+          Pirmas kartas?{" "}
           <Link
             className="text-slate-700 underline underline-offset-8"
-            to={'/registracija'}
+            to={"/registracija"}
           >
             Prašome užsiregistruoti
           </Link>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiDeleteUser, apiGetAllUsers } from "../api/users";
+import { apiDeleteUser, apiGetAllUsers } from "../../api/users";
 import { TiDelete } from "react-icons/ti";
 import { FaUserEdit } from "react-icons/fa";
 
@@ -10,7 +10,7 @@ interface IUser {
   role: string;
 }
 
-export const AdminPage = () => {
+export const AdminHomePage = () => {
   const [users, setUsers] = useState<IUser[]>([]);
 
   useEffect(() => {

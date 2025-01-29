@@ -22,7 +22,13 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const roleId = await role.findOne({ where: { role_name: "USER" } });
+    let roleId = await role.findOne({ where: { role_name: "USER" } });
+
+    // jei nera tokio vaidmens, sukuriam ji
+    if (!roleId) {
+      const newRole = await role.create({ role_name: "USER" });
+      roleId = newRole.id;
+    }
 
     const newUser = await user.create(
       {

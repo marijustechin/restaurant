@@ -1,5 +1,6 @@
 const Router = require("express").Router;
 const userController = require("../controllers/user.controller");
+const validator = require("../validators/user.validator");
 
 const userRouter = new Router();
 
@@ -9,10 +10,10 @@ userRouter.get("/", userController.getAll);
 userRouter.get("/:id", userController.getUserById);
 
 // sukuriam nauja
-userRouter.post("/", userController.register);
+userRouter.post("/", validator.register, userController.register);
 
 // prisijungimas
-userRouter.post("/login", userController.login);
+userRouter.post("/login", validator.login, userController.login);
 
 // atsijungimas
 userRouter.post("/logout", userController.logout);

@@ -1,14 +1,14 @@
 import * as z from "zod";
 import { RegisterSchema } from "../schemas/RegisterSchema";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { LoginSchema } from "../schemas/LoginSchema";
 import { API_URL } from ".";
 
 const USERS_API = `${API_URL}/users`;
 
-interface IApiError {
-  error: string;
-}
+// interface IApiError {
+//   error: string;
+// }
 
 export const apiRegisterUser = async (
   formValues: z.infer<typeof RegisterSchema>
@@ -18,11 +18,8 @@ export const apiRegisterUser = async (
   if (!validatedFields.success) return { error: "Neteisingi formos laukai" };
 
   try {
-    const res: AxiosResponse | IApiError = await axios.post(
-      USERS_API,
-      formValues
-    );
-    return res;
+    await axios.post(USERS_API, formValues);
+    return { success: "registracija sekminga" };
   } catch (e: unknown) {
     if (axios.isAxiosError(e)) {
       return { error: e.response?.data.message };
@@ -38,9 +35,12 @@ export const apiUserLogin = async (formValues: z.infer<typeof LoginSchema>) => {
 
   try {
     const res = await axios.post(`${USERS_API}/login`, formValues);
-    console.log(res.data);
-  } catch (e) {
-    return { error: e };
+    return res.data;
+  } catch (e: unknown) {
+    if (axios.isAxiosError(e)) {
+      return { error: e.response?.data.message };
+    }
+    return { error: "Įvyko nenumatyta klaida" };
   }
 };
 
