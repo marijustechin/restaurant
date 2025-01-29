@@ -1,13 +1,16 @@
-const ApiError = require("../exceptions/api.errors");
-const tokenService = require("../services/token.service");
+const ApiError = require('../exceptions/api.errors');
+const tokenService = require('../services/token.service');
 
 module.exports = function (req, res, next) {
   try {
+    // cia turi buti prikabintas tokenas
     const authorizationHeader = req.headers.authorization;
+
+    console.log(authorizationHeader);
 
     if (!authorizationHeader) throw new ApiError.UnauthorizedError();
 
-    const accessToken = authorizationHeader.split(" ")[1];
+    const accessToken = authorizationHeader.split(' ')[1];
 
     if (!accessToken) throw new ApiError.UnauthorizedError();
 

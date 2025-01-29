@@ -1,6 +1,7 @@
-import { AxiosResponse } from "axios";
-import $api from "../api";
-import { IAuthResponse } from "../types/types";
+import { AxiosResponse } from 'axios';
+import $api from '../api';
+import { IAuthResponse } from '../types/authResponse';
+import { useDispatch } from 'react-redux';
 
 export default class AuthService {
   static async login(
@@ -15,10 +16,10 @@ export default class AuthService {
     email: string,
     password: string
   ): Promise<AxiosResponse<IAuthResponse>> {
-    return $api.post("/users", { first_name, email, password });
+    return $api.post('/users', { first_name, email, password });
   }
 
   static async logout(): Promise<void> {
-    return $api.post("/users/logout");
+    return $api.post('/users/logout');
   }
 }

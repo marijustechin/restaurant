@@ -1,5 +1,6 @@
-const { validationResult } = require("express-validator");
-const userService = require("../services/user.service");
+const { validationResult } = require('express-validator');
+const userService = require('../services/user.service');
+const ApiError = require('../exceptions/api.errors');
 
 class UserController {
   async register(req, res, next) {
@@ -7,7 +8,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
+        console.log('Validation errors: ', errors.array());
         return;
       }
 
@@ -32,7 +33,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
+        console.log('Validation errors: ', errors.array());
         return;
       }
 
@@ -41,7 +42,7 @@ class UserController {
       const loggedUser = await userService.userlogin(email, password);
 
       // refreshToken dedam i cookies
-      res.cookie("refreshToken", loggedUser.refreshToken, {
+      res.cookie('refreshToken', loggedUser.refreshToken, {
         maxAge: 24 * 60 * 60 * 1000, // 1 diena
         // httpOnly pasako serveriui, kad cookie esanti informacija
         // neturi buti siunciama uz serverio ribu
@@ -59,10 +60,36 @@ class UserController {
     try {
       const { refreshToken } = req.cookies;
 
-      const token = userService.logoutUser(refreshToken);
+      if (!refreshToken) throw ApiError.UnauthorizedError('Not logged in');
 
-      res.clearCookie("refreshToken");
-      return res.json(token);
+      const token = await userService.logoutUser(refreshToken);
+
+      res.clearCookie('refreshToken');
+
+      return res.status(200).json(token);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async refresh(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+
+      if (!refreshToken) throw ApiError.UnauthorizedError('Not logged in');
+
+      const userData = await userService.refresh(refreshToken);
+
+      // refreshToken dedam i cookies
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 24 * 60 * 60 * 1000, // 1 diena
+        // httpOnly pasako serveriui, kad cookie esanti informacija
+        // neturi buti siunciama uz serverio ribu
+        // ir kad serveris turi nerodyti, kas viduje
+        httpOnly: true,
+      });
+
+      res.status(200).json(userData);
     } catch (e) {
       next(e);
     }
@@ -71,7 +98,8 @@ class UserController {
   async getAll(req, res, next) {
     try {
       const users = await userService.getAllUsers();
-      return res.json(users);
+
+      return res.status(200).json(users);
     } catch (e) {
       next(e);
     }
@@ -82,7 +110,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
+        console.log('Validation errors: ', errors.array());
         return;
       }
 
@@ -99,7 +127,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
+        console.log('Validation errors: ', errors.array());
         return;
       }
 

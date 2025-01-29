@@ -1,7 +1,4 @@
-export interface IUser {
-  id: string;
-  email: string;
-}
+import { IUser } from './User';
 
 export interface IAuthResponse {
   accessToken: string;
