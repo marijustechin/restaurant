@@ -6,7 +6,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const userRouter = new Router();
 
 // naudotoju sarasas - gali gauti tik autorizuoti naudotojai
-userRouter.get('/', authMiddleware, userController.getAll);
+userRouter.get('/', userController.getAll);
 // naudotojas paga id
 userRouter.get('/:id', userController.getUserById);
 
