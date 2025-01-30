@@ -1,9 +1,11 @@
-import { AxiosResponse } from 'axios';
-import $api from '../api';
-import { IAuthResponse } from '../types/authResponse';
-import { useDispatch } from 'react-redux';
+import { AxiosResponse } from "axios";
+import $api from "../api";
+import { IAuthResponse } from "../types/authResponse";
 
 export default class AuthService {
+  // Naudojant statinius metodus nereikia pirma sukurti klasės objekto
+  // o galima tiesiogiai iškviesti klasės metodą
+
   static async login(
     email: string,
     password: string
@@ -16,10 +18,11 @@ export default class AuthService {
     email: string,
     password: string
   ): Promise<AxiosResponse<IAuthResponse>> {
-    return $api.post('/users', { first_name, email, password });
+    const res = $api.post("/users", { first_name, email, password });
+    return res;
   }
 
   static async logout(): Promise<void> {
-    return $api.post('/users/logout');
+    return $api.post("/users/logout");
   }
 }

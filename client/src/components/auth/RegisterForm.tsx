@@ -2,11 +2,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { RegisterSchema } from "../../schemas/RegisterSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
-import { apiRegisterUser } from "../../api/users";
+import axios from "axios";
+import AuthService from "../../services/AuthService";
+import toast from "react-hot-toast";
 
 export const RegisterForm = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState("");
 
   const {
@@ -25,8 +28,32 @@ export const RegisterForm = () => {
   const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = async (
     formData
   ) => {
-    const res = await apiRegisterUser(formData);
-    if (res.error) setError(res.error);
+    try {
+      const validatedFields = RegisterSchema.safeParse(formData);
+
+      if (!validatedFields.success) {
+        setError("Neteisingi formos laukai");
+        return null;
+      }
+
+      await AuthService.registration(
+        formData.first_name,
+        formData.email,
+        formData.password
+      );
+      toast.success("Registracija sėkminga. Prašome prisijungti");
+      navigate("/prisijungimas");
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        setError(e.response?.data.message);
+      }
+
+      if (e.response.data.message) {
+        setError(e.response.data.message);
+      } else {
+        setError("Įvyko nenumatyta klaida");
+      }
+    }
   };
 
   return (

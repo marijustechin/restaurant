@@ -1,18 +1,17 @@
-import * as z from 'zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { LoginSchema } from '../../schemas/LoginSchema';
-import { Link, useNavigate } from 'react-router';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FC, useState } from 'react';
-import { apiUserLogin } from '../../api/users';
-import { login } from '../../store/features/user/userSlice';
-import { useDispatch } from 'react-redux';
-import AuthService from '../../services/AuthService';
-import axios from 'axios';
+import * as z from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { LoginSchema } from "../../schemas/LoginSchema";
+import { Link, useNavigate } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FC, useState } from "react";
+import { login } from "../../store/features/user/userSlice";
+import { useDispatch } from "react-redux";
+import AuthService from "../../services/AuthService";
+import axios from "axios";
 
 export const LoginForm: FC = () => {
   const dispatch = useDispatch();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const {
@@ -22,8 +21,8 @@ export const LoginForm: FC = () => {
   } = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -34,38 +33,41 @@ export const LoginForm: FC = () => {
       const validatedFields = LoginSchema.safeParse(formData);
 
       if (!validatedFields.success) {
-        setError('Neteisingi formos laukai');
+        setError("Neteisingi formos laukai");
         return null;
       }
 
       const res = await AuthService.login(formData.email, formData.password);
 
-      localStorage.setItem('resToken', res.data.accessToken);
+      localStorage.setItem("resToken", res.data.accessToken);
 
       dispatch(
         login({
           id: res.data.user.id,
           first_name: res.data.user.first_name,
           email: res.data.user.email,
-          role: res.data.user.role_id,
+          role: res.data.user.role,
+          address: res.data.user.address,
+          phone_number: res.data.user.phone_number,
         })
       );
 
-      navigate('/pirkejo-paskyra');
+      if (res.data.user.role === "USER") {
+        navigate("/pirkejo-paskyra");
+      } else {
+        navigate("/suvestine");
+      }
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         setError(e.response?.data.message);
       }
-      setError('Įvyko nenumatyta klaida');
-    }
-    // const res = await apiUserLogin(formData);
 
-    // if (res.error) {
-    //   setError(res.error);
-    // } else {
-    //   dispatch(login({ id: res.user.id, role: 'USER' }));
-    //   navigate('/pirkejo-paskyra');
-    // }
+      if (e.response.data.message) {
+        setError(e.response.data.message);
+      } else {
+        setError("Įvyko nenumatyta klaida");
+      }
+    }
   };
 
   return (
@@ -83,7 +85,7 @@ export const LoginForm: FC = () => {
       <fieldset className="border border-slate-300 p-1 rounded-lg flex flex-col gap-2">
         <legend
           className={`${
-            errors.email ? 'text-rose-500' : 'text-slate-600'
+            errors.email ? "text-rose-500" : "text-slate-600"
           } ml-4 p-1`}
         >
           El. paštas
@@ -92,7 +94,7 @@ export const LoginForm: FC = () => {
           className="form-input"
           type="email"
           autoComplete="on"
-          {...register('email')}
+          {...register("email")}
         />
       </fieldset>
       {errors.password && (
@@ -101,7 +103,7 @@ export const LoginForm: FC = () => {
       <fieldset className="border border-slate-300 p-1 rounded-lg">
         <legend
           className={`${
-            errors.password ? 'text-rose-500' : 'text-slate-600'
+            errors.password ? "text-rose-500" : "text-slate-600"
           } ml-4 p-1`}
         >
           Slaptažodis
@@ -110,7 +112,7 @@ export const LoginForm: FC = () => {
           className="form-input"
           type="password"
           autoComplete="off"
-          {...register('password')}
+          {...register("password")}
         />
       </fieldset>
       <div className="flex flex-col gap-2 mt-2">
@@ -121,10 +123,10 @@ export const LoginForm: FC = () => {
           Prisijungti
         </button>
         <p>
-          Pirmas kartas?{' '}
+          Pirmas kartas?{" "}
           <Link
             className="text-slate-700 underline underline-offset-8"
-            to={'/registracija'}
+            to={"/registracija"}
           >
             Prašome užsiregistruoti
           </Link>
