@@ -1,6 +1,6 @@
-const { validationResult } = require('express-validator');
-const userService = require('../services/user.service');
-const ApiError = require('../exceptions/api.errors');
+const { validationResult } = require("express-validator");
+const userService = require("../services/user.service");
+const ApiError = require("../exceptions/api.errors");
 
 class UserController {
   async register(req, res, next) {
@@ -8,7 +8,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log('Validation errors: ', errors.array());
+        console.log("Validation errors: ", errors.array());
         return;
       }
 
@@ -33,7 +33,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log('Validation errors: ', errors.array());
+        console.log("Validation errors: ", errors.array());
         return;
       }
 
@@ -42,7 +42,7 @@ class UserController {
       const loggedUser = await userService.userlogin(email, password);
 
       // refreshToken dedam i cookies
-      res.cookie('refreshToken', loggedUser.refreshToken, {
+      res.cookie("refreshToken", loggedUser.refreshToken, {
         maxAge: 24 * 60 * 60 * 1000, // 1 diena
         // httpOnly pasako serveriui, kad cookie esanti informacija
         // neturi buti siunciama uz serverio ribu
@@ -60,11 +60,12 @@ class UserController {
     try {
       const { refreshToken } = req.cookies;
 
-      if (!refreshToken) throw ApiError.UnauthorizedError('Not logged in');
+      if (!refreshToken)
+        throw ApiError.UnauthorizedError("Neprisijungęs naudotojas");
 
       const token = await userService.logoutUser(refreshToken);
 
-      res.clearCookie('refreshToken');
+      res.clearCookie("refreshToken");
 
       return res.status(200).json(token);
     } catch (e) {
@@ -76,12 +77,13 @@ class UserController {
     try {
       const { refreshToken } = req.cookies;
 
-      if (!refreshToken) throw ApiError.UnauthorizedError('Not logged in');
+      if (!refreshToken)
+        throw ApiError.UnauthorizedError("Neprisijungęs naudotojas");
 
       const userData = await userService.refresh(refreshToken);
 
       // refreshToken dedam i cookies
-      res.cookie('refreshToken', userData.refreshToken, {
+      res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 24 * 60 * 60 * 1000, // 1 diena
         // httpOnly pasako serveriui, kad cookie esanti informacija
         // neturi buti siunciama uz serverio ribu
@@ -110,7 +112,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log('Validation errors: ', errors.array());
+        console.log("Validation errors: ", errors.array());
         return;
       }
 
@@ -127,7 +129,7 @@ class UserController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log('Validation errors: ', errors.array());
+        console.log("Validation errors: ", errors.array());
         return;
       }
 

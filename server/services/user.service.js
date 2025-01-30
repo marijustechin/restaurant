@@ -1,9 +1,9 @@
-const bcrypt = require('bcryptjs');
-const sequelize = require('../db');
+const bcrypt = require("bcryptjs");
+const sequelize = require("../db");
 const { user, user_secret, role } = sequelize.models;
-const ApiError = require('../exceptions/api.errors');
-const UserDto = require('../dtos/user.dto');
-const tokenService = require('../services/token.service');
+const ApiError = require("../exceptions/api.errors");
+const UserDto = require("../dtos/user.dto");
+const tokenService = require("../services/token.service");
 
 class UserService {
   async #getUserByEmail(email) {
@@ -22,11 +22,11 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    let roleId = await role.findOne({ where: { role_name: 'USER' } });
+    let roleId = await role.findOne({ where: { role_name: "USER" } });
 
-    // jei nera tokio vaidmens, sukuriam ji
+    // jei nera tokio vaidmens, sukuriam numatytaji USER
     if (!roleId) {
-      const newRole = await role.create({ role_name: 'USER' });
+      const newRole = await role.create({ role_name: "USER" });
       roleId = newRole.id;
     }
 
@@ -34,7 +34,7 @@ class UserService {
       {
         first_name,
         email,
-        role_id: roleId.id, // ??? sita reikia turbut pasiimti is tokeno ???
+        role_id: roleId.id,
         user_secret: [{ password: hashedPassword }],
       },
       {
@@ -42,7 +42,7 @@ class UserService {
       }
     );
 
-    const userDto = new UserDto(newUser);
+    const userDto = await UserDto.init(newUser);
     const tokens = tokenService.generateTokens({ ...userDto });
     await tokenService.saveRefreshToken(userDto.id, tokens.refreshToken);
 
@@ -88,7 +88,7 @@ class UserService {
       );
     }
 
-    const userDto = new UserDto(activeUser);
+    const userDto = await UserDto.init(activeUser);
 
     const tokens = tokenService.generateTokens({ ...userDto });
 
@@ -123,7 +123,7 @@ class UserService {
   async userUpdate(id, data) {
     const foundUser = await user.findOne({ where: { id } });
 
-    if (!foundUser) throw ApiError.BadRequest('Naudotojas tokiu Id nerastas');
+    if (!foundUser) throw ApiError.BadRequest("Naudotojas tokiu Id nerastas");
 
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
@@ -138,11 +138,11 @@ class UserService {
   async deleteUser(id) {
     const foundUser = await user.findOne({ where: { id } });
 
-    if (!foundUser) throw ApiError.BadRequest('Naudotojas tokiu Id nerastas');
+    if (!foundUser) throw ApiError.BadRequest("Naudotojas tokiu Id nerastas");
 
     await foundUser.destroy();
 
-    return { success: 'success' };
+    return { success: "success" };
   }
 }
 
