@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 // endpointai
 const userRouter = require("./routers/user.router");
 const menuRouter = require("./routers/menu.router");
+const categoryRouter = require("./routers/category.router");
 const orderRouter = require("./routers/order.router");
 
 // klaidos
@@ -26,6 +27,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/menu", menuRouter);
+app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/orders", orderRouter);
 
 // sitoj eilej klaidos turi buti paskutines

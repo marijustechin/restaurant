@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const sequelize = require("../db");
 const { role } = sequelize.models;
 
@@ -23,6 +22,7 @@ module.exports = class UserDto {
 
   static async init(model) {
     const userRole = await role.findOne({ where: { id: model.role_id } });
+
     return new UserDto(model, userRole.role_name);
   }
 };

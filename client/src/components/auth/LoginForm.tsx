@@ -58,14 +58,14 @@ export const LoginForm: FC = () => {
         navigate("/suvestine");
       }
     } catch (e: unknown) {
+      console.log(e);
       if (axios.isAxiosError(e)) {
         setError(e.response?.data.message);
+        return null;
       }
 
-      if (e.response.data.message) {
-        setError(e.response.data.message);
-      } else {
-        setError("Įvyko nenumatyta klaida");
+      if (e instanceof Error) {
+        setError(e.message);
       }
     }
   };
