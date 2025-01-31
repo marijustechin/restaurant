@@ -1,6 +1,6 @@
-const { validationResult } = require("express-validator");
-const categoryService = require("../services/category.service");
-const ApiError = require("../exceptions/api.errors");
+const { validationResult } = require('express-validator');
+const categoryService = require('../services/category.service');
+const ApiError = require('../exceptions/api.errors');
 
 class CategoryController {
   async newCategory(req, res, next) {
@@ -9,7 +9,7 @@ class CategoryController {
 
       if (!validationErrors.isEmpty())
         throw ApiError.BadRequest(
-          "Validacijos klaida",
+          'Validacijos klaida',
           validationErrors.array()
         );
 
@@ -25,7 +25,23 @@ class CategoryController {
 
   async editCategory(req, res, next) {
     try {
-      res.status(200).json(req.params.id);
+      const validationErrors = validationResult(req);
+
+      if (!validationErrors.isEmpty())
+        throw ApiError.BadRequest(
+          'Validacijos klaida',
+          validationErrors.array()
+        );
+
+      const { category_name } = req.body;
+      const { id } = req.params;
+
+      const updatedCat = await categoryService.updateCategory(
+        id,
+        category_name
+      );
+
+      res.status(200).json(updatedCat);
     } catch (e) {
       next(e);
     }
@@ -33,7 +49,17 @@ class CategoryController {
 
   async deleteCategory(req, res, next) {
     try {
-      res.status(200).json(req.params.id);
+      const validationErrors = validationResult(req);
+
+      if (!validationErrors.isEmpty())
+        throw ApiError.BadRequest(
+          'Validacijos klaida',
+          validationErrors.array()
+        );
+
+      const deletedCat = await categoryService.deleteCategory(req.params.id);
+
+      res.status(200).json(deletedCat);
     } catch (e) {
       next(e);
     }

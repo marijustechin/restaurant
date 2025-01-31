@@ -13,6 +13,19 @@ class UserService {
     });
   }
 
+  async #getRoleId() {
+    const roleId = await role.findOne({ where: { role_name: 'USER' } });
+
+    if (roleId) {
+      return roleId.id;
+    } // nei nera, sukuriam
+    else {
+      const defaultRole = await role.create({ role_name: 'USER' });
+
+      return defaultRole.id;
+    }
+  }
+
   async registration(first_name, email, password) {
     // patikrinam ar pastas neuzimtas
     const existingEmail = await user.findOne({ where: { email } });
@@ -22,19 +35,11 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    let roleId = await role.findOne({ where: { role_name: 'USER' } });
-
-    // jei nera tokio vaidmens, sukuriam numatytaji USER
-    if (!roleId) {
-      const newRole = await role.create({ role_name: 'USER' });
-      roleId = newRole.id;
-    }
-
     const newUser = await user.create(
       {
         first_name,
         email,
-        role_id: roleId.id,
+        role_id: await this.#getRoleId(),
         user_secret: [{ password: hashedPassword }],
       },
       {

@@ -1,7 +1,7 @@
-const sequelize = require("../db");
-const CategoryDto = require("../dtos/category.dto");
+const sequelize = require('../db');
+const CategoryDto = require('../dtos/category.dto');
 const { category } = sequelize.models;
-const ApiError = require("../exceptions/api.errors");
+const ApiError = require('../exceptions/api.errors');
 
 class CategoryService {
   async addCategory(category_name) {
@@ -32,6 +32,19 @@ class CategoryService {
     }
 
     return categoriesDtos;
+  }
+
+  async deleteCategory(catId) {
+    return await category.destroy({ where: { id: catId } });
+  }
+
+  async updateCategory(catId, catName) {
+    const cat = await category.findOne({ where: { id: catId } });
+
+    cat.category_name = catName;
+    cat.save();
+
+    return await CategoryDto.init(cat);
   }
 }
 

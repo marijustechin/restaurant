@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react";
-import { PageTitle } from "../../components/PageTitle";
-import { ICategory } from "../../types/Category";
-import CategoryService from "../../services/CategoryService";
-import { CategoryForm } from "../../components/admin/forms/CategoryForm";
-import { EditCategory } from "../../components/admin/forms/EditCategory";
-import { ConfirmModal } from "../../components/admin/ConfirmModal";
+import { useEffect, useState } from 'react';
+import { PageTitle } from '../../components/PageTitle';
+import { ICategory } from '../../types/Category';
+import CategoryService from '../../services/CategoryService';
+import { CategoryForm } from '../../components/admin/forms/CategoryForm';
+import { EditCategory } from '../../components/admin/forms/EditCategory';
+import { ConfirmModal } from '../../components/admin/ConfirmModal';
+import axios from 'axios';
 
 export const CategoriesPage = () => {
   const [cats, setCats] = useState<ICategory[]>([]);
   const [editOpen, setEditOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [editCat, setEditCat] = useState<ICategory | undefined>();
+  const [prompt, setPrompt] = useState('');
 
   useEffect(() => {
     allCategories();
-  }, []);
+  }, [editOpen]);
 
   const allCategories = async () => {
     const res = await CategoryService.getAllCategories();
@@ -28,13 +30,34 @@ export const CategoriesPage = () => {
 
   const handleDeleteCategory = async (catId: string) => {
     setEditCat(cats.find((cat) => cat.id === catId));
+    const catName = cats.find((cat) => cat.id === catId)?.category_name;
+    setPrompt(`Ar tikrai norite ištrinti kategoriją "${catName}"`);
     setConfirm(true);
+  };
+
+  const handleAnswer = async (answer: boolean) => {
+    if (answer) {
+      try {
+        const res = await CategoryService.deleteCategory(editCat?.id || '1000');
+        setCats([...cats.filter((cat) => cat.id !== editCat?.id)]);
+      } catch (e: unknown) {
+        if (axios.isAxiosError(e)) {
+          console.log(e.response?.data);
+          return null;
+        }
+        if (e instanceof Error) console.log(e.message);
+      }
+    }
+    setConfirm(false);
   };
 
   return (
     <div>
       <PageTitle>Patiekalų kategorijos</PageTitle>
-      <CategoryForm onSave={(newCat) => setCats([...cats, newCat])} />
+      <CategoryForm
+        onSave={(newCat) => setCats([...cats, newCat])}
+        isModal={false}
+      />
 
       <div className="relative overflow-x-auto p-3">
         <table className="w-full text-sm text-left">
@@ -100,10 +123,9 @@ export const CategoriesPage = () => {
       )}
       {confirm && (
         <ConfirmModal
-          onNo={() => setConfirm(false)}
-          onYes={() => {}}
+          onAnswer={(answer) => handleAnswer(answer)}
           open={confirm}
-          prompt="Ar tikrai?"
+          prompt={prompt}
         />
       )}
     </div>

@@ -1,14 +1,14 @@
-import { AxiosResponse } from "axios";
-import $api from "../api";
-import { ICategory } from "../types/Category";
+import { AxiosResponse } from 'axios';
+import $api from '../api';
+import { ICategory } from '../types/Category';
 
 export default class CategoryService {
   static getAllCategories(): Promise<AxiosResponse<ICategory[]>> {
-    return $api.get("/category");
+    return $api.get('/category');
   }
 
   static addCategory(category_name: string): Promise<AxiosResponse<ICategory>> {
-    return $api.post("/category", { category_name });
+    return $api.post('/category', { category_name });
   }
 
   static deleteCategory(catId: string): Promise<AxiosResponse> {
@@ -20,8 +20,9 @@ export default class CategoryService {
   }
 
   static updateCategory(
+    catId: string,
     category_name: string
   ): Promise<AxiosResponse<ICategory>> {
-    return $api.put("/category", { category_name });
+    return $api.put(`/category/${catId}`, { category_name });
   }
 }
