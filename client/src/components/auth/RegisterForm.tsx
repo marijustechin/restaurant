@@ -1,16 +1,16 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
-import { RegisterSchema } from "../../schemas/RegisterSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router";
-import { useState } from "react";
-import axios from "axios";
-import AuthService from "../../services/AuthService";
-import toast from "react-hot-toast";
+import { SubmitHandler, useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { RegisterSchema } from '../../schemas/RegisterSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link, useNavigate } from 'react-router';
+import { useState } from 'react';
+import axios from 'axios';
+import AuthService from '../../services/AuthService';
+import toast from 'react-hot-toast';
 
 export const RegisterForm = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const {
     register,
@@ -19,9 +19,9 @@ export const RegisterForm = () => {
   } = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      first_name: "",
-      email: "",
-      password: "",
+      first_name: '',
+      email: '',
+      password: '',
     },
   });
 
@@ -32,7 +32,7 @@ export const RegisterForm = () => {
       const validatedFields = RegisterSchema.safeParse(formData);
 
       if (!validatedFields.success) {
-        setError("Neteisingi formos laukai");
+        setError('Neteisingi formos laukai');
         return null;
       }
 
@@ -41,17 +41,16 @@ export const RegisterForm = () => {
         formData.email,
         formData.password
       );
-      toast.success("Registracija sėkminga. Prašome prisijungti");
-      navigate("/prisijungimas");
+      toast.success('Registracija sėkminga. Prašome prisijungti');
+      navigate('/prisijungimas');
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         setError(e.response?.data.message);
+        return;
       }
 
-      if (e.response.data.message) {
-        setError(e.response.data.message);
-      } else {
-        setError("Įvyko nenumatyta klaida");
+      if (e instanceof Error) {
+        setError(e.message);
       }
     }
   };
@@ -73,7 +72,7 @@ export const RegisterForm = () => {
       <fieldset className="border border-slate-300 px-1 rounded-lg flex flex-col gap-2">
         <legend
           className={`${
-            errors.first_name ? "text-rose-500" : "text-slate-600"
+            errors.first_name ? 'text-rose-500' : 'text-slate-600'
           } ml-4 p-1`}
         >
           Vardas
@@ -82,7 +81,7 @@ export const RegisterForm = () => {
           className="form-input"
           type="text"
           autoComplete="on"
-          {...register("first_name")}
+          {...register('first_name')}
         />
       </fieldset>
       {errors.email && (
@@ -91,7 +90,7 @@ export const RegisterForm = () => {
       <fieldset className="border border-slate-300 p-1 rounded-lg flex flex-col gap-2">
         <legend
           className={`${
-            errors.email ? "text-rose-500" : "text-slate-600"
+            errors.email ? 'text-rose-500' : 'text-slate-600'
           } ml-4 p-1`}
         >
           El. paštas
@@ -100,7 +99,7 @@ export const RegisterForm = () => {
           className="form-input"
           type="email"
           autoComplete="on"
-          {...register("email")}
+          {...register('email')}
         />
       </fieldset>
       {errors.password && (
@@ -109,7 +108,7 @@ export const RegisterForm = () => {
       <fieldset className="border border-slate-300 p-1 rounded-lg">
         <legend
           className={`${
-            errors.password ? "text-rose-500" : "text-slate-600"
+            errors.password ? 'text-rose-500' : 'text-slate-600'
           } ml-4 p-1`}
         >
           Slaptažodis
@@ -118,7 +117,7 @@ export const RegisterForm = () => {
           className="form-input"
           type="password"
           autoComplete="off"
-          {...register("password")}
+          {...register('password')}
         />
       </fieldset>
       <div className="flex flex-col gap-2 mt-2">
@@ -129,10 +128,10 @@ export const RegisterForm = () => {
           Užsiregistruoti
         </button>
         <p>
-          Ne pirmas kartas?{" "}
+          Ne pirmas kartas?{' '}
           <Link
             className="text-slate-700 underline underline-offset-8"
-            to={"/prisijungimas"}
+            to={'/prisijungimas'}
           >
             Prašome prisijungti
           </Link>

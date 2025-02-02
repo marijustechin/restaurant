@@ -1,15 +1,16 @@
-const { validationResult } = require("express-validator");
-const menuService = require("../services/menu.service");
+const { validationResult } = require('express-validator');
+const menuService = require('../services/menu.service');
 
 class MenuController {
   async newItem(req, res, next) {
     try {
-      const errors = validationResult(req);
+      const validationErrors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
-        return;
-      }
+      if (!validationErrors.isEmpty())
+        throw ApiError.BadRequest(
+          'Validacijos klaida',
+          validationErrors.array()
+        );
 
       const { name, description, price, category_id, image } = req.body;
 
@@ -42,7 +43,7 @@ class MenuController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
+        console.log('Validation errors: ', errors.array());
         return;
       }
 
@@ -56,12 +57,13 @@ class MenuController {
 
   async updateItem(req, res, next) {
     try {
-      const errors = validationResult(req);
+      const validationErrors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        console.log("Validation errors: ", errors.array());
-        return;
-      }
+      if (!validationErrors.isEmpty())
+        throw ApiError.BadRequest(
+          'Validacijos klaida',
+          validationErrors.array()
+        );
 
       const updatedMenuItem = await menuService.updateMenuItem(
         req.params.id,

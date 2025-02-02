@@ -1,4 +1,5 @@
 module.exports = class MenuDto {
+  id;
   name;
   description;
   price;
@@ -6,6 +7,7 @@ module.exports = class MenuDto {
   image;
 
   constructor(model) {
+    this.id = model.id;
     this.name = model.name;
     this.description = model.description;
     this.price = model.price;

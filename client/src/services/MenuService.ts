@@ -1,17 +1,49 @@
 import { AxiosResponse } from 'axios';
-import { IUser } from '../types/User';
 import $api from '../api';
+import { IMenuItem } from '../types/MenuItem';
 
 export default class MenuService {
-  static getAllMenus(): Promise<AxiosResponse<IUser[]>> {
-    return $api.get<IUser[]>('/users');
+  // visi patiekalai - neapsaugotas
+  static getAllMenus(): Promise<AxiosResponse<IMenuItem[]>> {
+    return $api.get<IMenuItem[]>('/menu');
   }
 
-  static createMenu(): Promise<AxiosResponse<IUser>> {
-    return $api.post('/menu');
+  // visi patiekalai - neapsaugotas
+  static getMenuItemById(itemId: number): Promise<AxiosResponse<IMenuItem>> {
+    return $api.get<IMenuItem>(`/menu/${itemId}`);
   }
 
-  static editMenu(id: string): Promise<AxiosResponse<IUser>> {
-    return $api.put(`/menu/${id}`);
+  // tik admin
+  static createMenu(
+    name: string,
+    description: string,
+    image: string,
+    category_id: number,
+    price: number
+  ): Promise<AxiosResponse<IMenuItem>> {
+    return $api.post('/menu', { name, description, category_id, price, image });
   }
+
+  // tik admin
+  static updateMenuItem(
+    id: number,
+    name: string,
+    description: string,
+    image: string,
+    category_id: number,
+    price: number
+  ): Promise<AxiosResponse<IMenuItem>> {
+    return $api.put(`/menu/${id}`, {
+      name,
+      description,
+      category_id,
+      price,
+      image,
+    });
+  }
+
+  // tik admin
+  static deleteMenuItem = (id: string): Promise<AxiosResponse> => {
+    return $api.delete(`/menu/${id}`);
+  };
 }

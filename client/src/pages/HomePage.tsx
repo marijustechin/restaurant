@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { apiGetAllMenuItems } from "../api/menu";
-import { Counter } from "../components/temp/Counter";
+import { useEffect, useState } from 'react';
+import { apiGetAllMenuItems } from '../api/menu';
+import { Counter } from '../components/temp/Counter';
+import { IMenuItem } from '../types/MenuItem';
+import { MenuItemCard } from '../components/MenuItemCard';
 
 export const HomePage = () => {
-  const [allMenu, setAllMenu] = useState([]);
+  const [allMenu, setAllMenu] = useState<IMenuItem[]>([]);
 
   useEffect(() => {
     allMenuItems();
@@ -17,21 +19,19 @@ export const HomePage = () => {
   return (
     <main>
       <h1 className="text-center shadow-text text-3xl">Visi patiekalai</h1>
+      <div className="flex">
+        <aside>cia bus visokie filtrai</aside>
+        <section className="grid grid-cols-3">
+          {allMenu &&
+            allMenu.map((item) => (
+              <div key={item.name}>
+                <MenuItemCard menuItem={item} />
+              </div>
+            ))}
+        </section>
+      </div>
       {/* laikinas counter pavyzdys */}
       <Counter />
-      <section className="grid grid-cols-3">
-        {allMenu &&
-          allMenu.map((item) => (
-            <div key={item.name}>
-              <h2 className="text-2xl font-semibold">{item.name}</h2>
-              <p>{item.description}</p>
-              <p>
-                Kaina: <span className="font-semibold">{item.price}</span>
-              </p>
-              <img src={item.image} alt={item.name} className="w-60" />
-            </div>
-          ))}
-      </section>
     </main>
   );
 };
