@@ -6,6 +6,7 @@ import { PageTitle } from '../../components/PageTitle';
 import { MenuForm } from '../../components/admin/forms/MenuForm';
 import { ConfirmModal } from '../../components/admin/ConfirmModal';
 import { IMenuItem } from '../../types/MenuItem';
+import { MenuItemsGeneratorForm } from '../../components/admin/forms/MenuItemsGeneratorForm';
 
 export const MenusPage = () => {
   // patiekalai
@@ -22,6 +23,9 @@ export const MenusPage = () => {
   const [menuItemToDelete, setMenuItemToDelete] = useState<IMenuItem>();
   // backend klaidos
   const [apiError, setApiError] = useState('');
+
+  // generuojam patiekalus
+  const [generatingMenus, setGeneratingMenus] = useState(false);
 
   useEffect(() => {
     getAllMenus();
@@ -91,6 +95,16 @@ export const MenusPage = () => {
         >
           + Pridėti patiekalą
         </button>
+        <div className="flex">
+          <div className={`${generatingMenus ? 'visible' : 'hidden'}`}>
+            Generuojami patiekalai. Tai gali šiek tiek užtrukti
+          </div>
+          <div className={`${generatingMenus ? 'hidden' : 'visible'}`}>
+            <MenuItemsGeneratorForm
+              onWorking={(working) => setGeneratingMenus(working)}
+            />
+          </div>
+        </div>
       </div>
       {menus ? (
         <div className="relative overflow-x-auto p-3">
