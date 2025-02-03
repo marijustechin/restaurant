@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import CategoryService from '../../../services/CategoryService';
 import MenuService from '../../../services/MenuService';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface FormInputs {
   menuItemCount: number;
@@ -61,7 +63,7 @@ export const MenuItemsGeneratorForm = ({
 
     // generuojam patiekalus
     // random nuotauka API be registracijos
-    const image = 'https://picsum.photos/500/400';
+    const image = 'https://picsum.photos/500/400?grayscale&blur=2';
     for (let i = 0; i <= formData.menuItemCount; i++) {
       const randomNames = uuidv4().split('-');
       const name = 'Patiekalas ' + randomNames[0];
@@ -73,16 +75,20 @@ export const MenuItemsGeneratorForm = ({
       const price = Math.round((Math.random() * (18 - 3 + 1) + 3) * 100) / 100;
 
       try {
-        const resMenuItem = await MenuService.createMenu(
+        await MenuService.createMenu(
           name,
           description,
           image,
           category_id,
           price
         );
-        console.log(resMenuItem.data);
       } catch (e: unknown) {
-        console.log(e);
+        if (axios.isAxiosError(e)) {
+          toast.error(e.response?.data.message);
+          return null;
+        }
+
+        if (e instanceof Error) toast.error(e.message);
       }
     }
 
