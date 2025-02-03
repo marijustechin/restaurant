@@ -17,19 +17,6 @@ if (token) {
   userData = jwtDecode(token);
 }
 
-// const initialState = () => {
-//   if (userData) {
-//     return {
-//       id: userData.id,
-//       first_name: userData.first_name,
-//       email: userData.email,
-//       role: userData.role,
-//       address: userData.address,
-//       phone_number: userData.phone_number,
-//     };
-//   }
-// };
-
 const initialState = {
   id: userData.id,
   first_name: userData.first_name,
@@ -51,6 +38,11 @@ export const userSlice = createSlice({
       state.address = action.payload.address;
       state.phone_number = action.payload.phone_number;
     },
+    update: (state, action) => {
+      state.first_name = action.payload.first_name;
+      state.address = action.payload.address;
+      state.phone_number = action.payload.phone_number;
+    },
     logout: (state) => {
       state.id = "0";
       state.first_name = "";
@@ -62,6 +54,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, update } = userSlice.actions;
 
 export default userSlice.reducer;
