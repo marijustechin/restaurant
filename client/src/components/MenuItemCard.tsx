@@ -1,7 +1,7 @@
-import { Link } from 'react-router';
-import HelperService from '../services/HelperService';
-import { IMenuItem } from '../types/MenuItem';
-import { ButtonToCart } from './ButtonToCart';
+import { Link } from "react-router";
+import HelperService from "../services/HelperService";
+import { IMenuItem } from "../types/MenuItem";
+import { ButtonToCart } from "./ButtonToCart";
 
 interface MenuItemCardProps {
   menuItem: IMenuItem;
@@ -32,13 +32,8 @@ export const MenuItemCard = ({ menuItem }: MenuItemCardProps) => {
               {HelperService.formatCurrency(menuItem.price)}
             </span>
           </p>
-          <div className="flex items-center">
-            <span className="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
-              5.0
-            </span>
-          </div>
         </div>
-        <ButtonToCart />
+        <ButtonToCart menuItem={menuItem} />
       </div>
     </div>
   );

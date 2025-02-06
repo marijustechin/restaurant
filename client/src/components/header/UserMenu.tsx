@@ -7,8 +7,8 @@ import { logout } from "../../store/features/user/userSlice";
 import AuthService from "../../services/AuthService";
 
 export const UserMenu = () => {
-  const count = useSelector((state: RootState) => state.counter.count);
   const userId = useSelector((state: RootState) => state.user.id);
+  const cart = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
@@ -19,10 +19,13 @@ export const UserMenu = () => {
 
   return (
     <div className="flex gap-2 items-center">
-      <div className="flex gap-2 items-center">
-        <FiShoppingCart size={30} />
-        <p className="text-lg">{count}</p>
-      </div>
+      <Link to={"/pirkiniu-krepselis"}>
+        <div className="flex gap-2 items-center">
+          <FiShoppingCart size={30} />
+          <p className="text-lg">{cart.totalCount}</p>
+        </div>
+      </Link>
+
       <div className="flex gap-2 items-center">
         <FaRegUser size={30} />
         {userId !== "0" ? (

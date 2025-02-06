@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { apiGetAllMenuItems } from "../api/menu";
-import { Counter } from "../components/temp/Counter";
 import { IMenuItem } from "../types/MenuItem";
 import { MenuItemCard } from "../components/MenuItemCard";
 
@@ -18,7 +17,10 @@ export const HomePage = () => {
 
   return (
     <div>
-      <h1 className="text-center shadow-text text-3xl">Visi patiekalai</h1>
+      <h1 className="text-center shadow-text text-3xl">
+        Restoranas &bdquo;Trys dručkiai&rdquo;
+      </h1>
+      <div>Redux testas: </div>
       <div className="flex">
         <aside>cia bus visokie filtrai</aside>
         <div className="flex grow">
@@ -32,8 +34,6 @@ export const HomePage = () => {
           </section>
         </div>
       </div>
-      {/* laikinas counter pavyzdys */}
-      <Counter />
     </div>
   );
 };
