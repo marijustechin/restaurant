@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { apiGetAllMenuItems } from "../api/menu";
 import { IMenuItem } from "../types/MenuItem";
 import { MenuItemCard } from "../components/MenuItemCard";
+import { Pagination } from "../components/Pagination";
 
 export const HomePage = () => {
   const [allMenu, setAllMenu] = useState<IMenuItem[]>([]);
+  const [menusPerPage, setMenusPerPage] = useState(9);
 
   useEffect(() => {
     allMenuItems();
@@ -33,6 +35,9 @@ export const HomePage = () => {
               ))}
           </section>
         </div>
+      </div>
+      <div>
+        <Pagination />
       </div>
     </div>
   );

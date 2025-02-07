@@ -1,11 +1,17 @@
-import { AxiosResponse } from 'axios';
-import $api from '../api';
-import { IMenuItem } from '../types/MenuItem';
+import { AxiosResponse } from "axios";
+import $api from "../api";
+import { IMenuItem } from "../types/MenuItem";
 
 export default class MenuService {
   // visi patiekalai - neapsaugotas
-  static getAllMenus(): Promise<AxiosResponse<IMenuItem[]>> {
-    return $api.get<IMenuItem[]>('/menu');
+  static getAllMenus(query?: string): Promise<AxiosResponse<IMenuItem[]>> {
+    if (query) {
+      // uzklausa su parametrais
+      return $api.get<IMenuItem[]>(`/menu${query}`);
+    } else {
+      // visi patiekalai
+      return $api.get<IMenuItem[]>("/menu");
+    }
   }
 
   // visi patiekalai - neapsaugotas
@@ -21,7 +27,7 @@ export default class MenuService {
     category_id: number,
     price: number
   ): Promise<AxiosResponse<IMenuItem>> {
-    return $api.post('/menu', { name, description, category_id, price, image });
+    return $api.post("/menu", { name, description, category_id, price, image });
   }
 
   // tik admin

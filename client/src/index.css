@@ -10,4 +10,8 @@
   .form-input {
     @apply w-full rounded-lg py-1 px-3 focus:outline-none;
   }
+
+  .btn-generic {
+    @apply border border-slate-300 bg-slate-200 rounded-lg py-1 px-2 hover:bg-slate-300;
+  }
 }

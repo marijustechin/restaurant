@@ -13,11 +13,12 @@ interface ICart {
   totalSum: number;
 }
 
-const initialState: ICart = {
-  allItems: [],
-  totalCount: 0,
-  totalSum: 0,
-};
+// ar yra krepselis localStorage?
+const cartFromStorage = localStorage.getItem("resCart");
+
+const initialState: ICart = cartFromStorage
+  ? JSON.parse(cartFromStorage)
+  : { allItems: [], totalCount: 0, totalSum: 0 };
 
 export const cartSlice = createSlice({
   name: "cart",
@@ -29,9 +30,10 @@ export const cartSlice = createSlice({
         (item) => item.singleItem.id === action.payload.id
       );
 
+      let cartItem: ICartItem;
       // jei yra, atnaujinam count ir total
       if (existingItem) {
-        const cartItem = {
+        cartItem = {
           singleItem: action.payload,
           count: existingItem.count + 1,
           sum: existingItem.sum + action.payload.price,
@@ -45,7 +47,7 @@ export const cartSlice = createSlice({
         status.allItems[idx].sum += cartItem.singleItem.price;
 
         status.totalCount++;
-        status.totalSum += cartItem.sum;
+        status.totalSum += cartItem.singleItem.price;
       } else {
         // jei nera pridedam nauja
         const cartItem = {
@@ -57,10 +59,36 @@ export const cartSlice = createSlice({
         status.totalCount++;
         status.totalSum += cartItem.sum;
       }
+      // cia reiketu krepseli irasyti i local storate
+      localStorage.setItem("resCart", JSON.stringify(status));
     },
 
     removeItem(status, action) {
-      status.totalCount--;
+      // surandam masyve reikalinga patiekala
+      const existingItem = status.allItems.find(
+        (item) => item.singleItem.id === action.payload.id
+      );
+
+      if (existingItem) {
+        // pakeiciam reiksmes
+        status.totalCount--;
+        status.totalSum -= existingItem.singleItem.price;
+        if (existingItem.count > 1) {
+          const idx = status.allItems.findIndex(
+            (menuItem) => menuItem.singleItem.id === existingItem.singleItem.id
+          );
+          status.allItems[idx].count--;
+          status.allItems[idx].sum -= existingItem.singleItem.price;
+        } else {
+          const newStatus = status.allItems.filter(
+            (item) => item.singleItem.id !== existingItem.singleItem.id
+          );
+          // pasalinam is masyvo visa patiekalo objekta
+          status.allItems = [...newStatus];
+        }
+      }
+      // cia reiketu krepseli irasyti i local storate
+      localStorage.setItem("resCart", JSON.stringify(status));
     },
   },
 });

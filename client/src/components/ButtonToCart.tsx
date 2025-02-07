@@ -26,22 +26,18 @@ export const ButtonToCart = ({ menuItem }: { menuItem: IMenuItem }) => {
 
   const handleAddToCart = () => {
     dispatch(addItem(menuItem));
-    setItemCount(getItemsCount);
+    setItemCount(itemCount + 1);
   };
 
   const removeFromCart = () => {
     dispatch(removeItem(menuItem));
-    setItemCount(getItemsCount);
+    setItemCount(itemCount - 1);
   };
 
   return (
     <div>
       {itemCount === 0 ? (
-        <button
-          onClick={handleAddToCart}
-          type="button"
-          className="border border-slate-300 bg-slate-200 rounded-lg py-1 px-2 hover:bg-slate-300"
-        >
+        <button onClick={handleAddToCart} type="button" className="btn-generic">
           Į krepšelį
         </button>
       ) : (
