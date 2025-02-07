@@ -1,5 +1,5 @@
-const { validationResult } = require('express-validator');
-const menuService = require('../services/menu.service');
+const { validationResult } = require("express-validator");
+const menuService = require("../services/menu.service");
 
 class MenuController {
   async newItem(req, res, next) {
@@ -8,7 +8,7 @@ class MenuController {
 
       if (!validationErrors.isEmpty())
         throw ApiError.BadRequest(
-          'Validacijos klaida',
+          "Validacijos klaida",
           validationErrors.array()
         );
 
@@ -30,7 +30,9 @@ class MenuController {
 
   async allItems(req, res, next) {
     try {
-      const menuItems = await menuService.getAllMenuItems();
+      const { limit, page } = req.query;
+
+      const menuItems = await menuService.getAllMenuItems(limit, page);
 
       res.status(200).json(menuItems);
     } catch (e) {
@@ -43,7 +45,7 @@ class MenuController {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        console.log('Validation errors: ', errors.array());
+        console.log("Validation errors: ", errors.array());
         return;
       }
 
@@ -61,7 +63,7 @@ class MenuController {
 
       if (!validationErrors.isEmpty())
         throw ApiError.BadRequest(
-          'Validacijos klaida',
+          "Validacijos klaida",
           validationErrors.array()
         );
 

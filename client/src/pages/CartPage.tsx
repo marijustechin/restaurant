@@ -17,7 +17,7 @@ export const CartPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          <table className="border-b border-slate-400">
+          <table className="">
             <thead>
               <tr>
                 <th>ID</th>

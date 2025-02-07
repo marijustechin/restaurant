@@ -1,11 +1,19 @@
-const sequelize = require('../db');
+const sequelize = require("../db");
 const { menu_item, category } = sequelize.models;
-const ApiError = require('../exceptions/api.errors');
-const menuDto = require('../dtos/menu.dto');
+const ApiError = require("../exceptions/api.errors");
+const menuDto = require("../dtos/menu.dto");
 
 class MenuService {
-  async getAllMenuItems() {
-    const menuItems = await menu_item.findAll();
+  async getAllMenuItems(limit, page) {
+    let menuItems;
+
+    if (limit && page) {
+      // pagination realizavimas
+      return "Cia bus puslapiavimas";
+    } else {
+      //gaunam visus
+      menuItems = await menu_item.findAll();
+    }
 
     let menuItemsDtos = [];
 
@@ -39,7 +47,7 @@ class MenuService {
   async updateMenuItem(id, data) {
     const itemToUpdate = await menu_item.findOne({ where: { id } });
 
-    if (!itemToUpdate) throw ApiError.BadRequest('Tokio patiekalo nera');
+    if (!itemToUpdate) throw ApiError.BadRequest("Tokio patiekalo nera");
 
     itemToUpdate.update(data);
 
@@ -49,10 +57,10 @@ class MenuService {
   async removeMenuItem(id) {
     const itemToRemove = await menu_item.findOne({ where: { id } });
 
-    if (!itemToRemove) throw ApiError.BadRequest('Tokio patiekalo nera');
+    if (!itemToRemove) throw ApiError.BadRequest("Tokio patiekalo nera");
 
     await itemToRemove.destroy();
-    return { status: 'success' };
+    return { status: "success" };
   }
 }
 
